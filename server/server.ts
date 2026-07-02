@@ -24,7 +24,7 @@ db.connect((err) => {
   }
 });
 
-// ================= GET TODOS =================
+//GET TODOS
 
 app.get("/todos", (req: Request, res: Response) => {
   db.query("SELECT * FROM todos", (err, result) => {
@@ -36,7 +36,7 @@ app.get("/todos", (req: Request, res: Response) => {
   });
 });
 
-// ================= ADD TODO =================
+//  ADD TODO
 
 app.post("/todos", (req: Request, res: Response) => {
   const { text } = req.body;
@@ -52,7 +52,7 @@ app.post("/todos", (req: Request, res: Response) => {
   });
 });
 
-// ================= UPDATE TODO TEXT =================
+//  UPDATE TODO TEXT
 
 app.put("/todos/:id", (req: Request, res: Response) => {
   const { id } = req.params;
@@ -69,7 +69,7 @@ app.put("/todos/:id", (req: Request, res: Response) => {
   });
 });
 
-// ================= UPDATE COMPLETE / FAVOURITE =================
+//  UPDATE COMPLETE / FAVOURITE
 
 app.patch("/todos/:id", (req: Request, res: Response) => {
   const { id } = req.params;
@@ -90,7 +90,7 @@ app.patch("/todos/:id", (req: Request, res: Response) => {
   );
 });
 
-// ================= DELETE TODO =================
+// DELETE TODO
 
 app.delete("/todos/:id", (req: Request, res: Response) => {
   const { id } = req.params;
@@ -106,7 +106,7 @@ app.delete("/todos/:id", (req: Request, res: Response) => {
   });
 });
 
-// ================= START SERVER =================
+//  START SERVER
 
 const PORT = 5000;
 
