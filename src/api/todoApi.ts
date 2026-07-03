@@ -13,7 +13,7 @@ export const deleteTodo = (id: number) => API.delete(`/todos/${id}`);
 export const updateTodo = (id: number, text: string) =>
   API.put(`/todos/${id}`, { text });
 
-export const patchTodo = (id: number, completed: number, favourite: number) =>
+export const patchTodo = (id: number, completed: boolean, favourite: boolean) =>
   API.patch(`/todos/${id}`, {
     completed,
     favourite,

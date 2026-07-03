@@ -48,8 +48,10 @@ const TodoActions = ({
       <button
         onClick={() => favouriteTask(todo)}
         title="Favourite"
-        className={`${btnBase} bg-gradient-to-br from-yellow-300 to-amber-500 hover:shadow-yellow-400/50 ${
-          todo.favourite === 1 ? "text-slate-900" : "text-white"
+        className={`${btnBase} transition-all duration-300 ${
+          todo.favourite
+            ? "bg-gradient-to-br from-yellow-300 to-amber-500 text-slate-900 shadow-yellow-400/60"
+            : "bg-gradient-to-br from-yellow-500 to-yellow-700 text-white hover:shadow-yellow-400/50"
         }`}
       >
         <FaStar size={13} />

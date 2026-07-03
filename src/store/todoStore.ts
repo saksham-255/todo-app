@@ -75,34 +75,56 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
       deleteId: id,
     }),
 
-  fetchTodos: async () => {
-    const res = await api.getTodos();
+  // fetchTodos using try catch
 
-    set({
-      todos: res.data,
-    });
+  fetchTodos: async () => {
+    try {
+      const res = await api.getTodos();
+
+      set({
+        todos: res.data,
+      });
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+
+      set({
+        error: "Failed to load todos.",
+      });
+    }
   },
+
+  // add task using try catch
 
   addTask: async () => {
     const { task } = get();
 
     if (task.trim() === "") {
       set({
-        error: "⚠️ Task cannot be empty.",
+        error: "Task cannot be empty.",
       });
 
       return;
     }
 
-    await api.addTodo(task);
+    try {
+      await api.addTodo(task);
 
-    set({
-      task: "",
-      error: "",
-    });
+      set({
+        task: "",
+        error: "",
+      });
 
-    get().fetchTodos();
+      get().fetchTodos();
+    } catch (error) {
+      console.error("Error adding todo:", error);
+
+      set({
+        error: "Failed to add task.",
+      });
+    }
   },
+
+  // delete task
 
   deleteTask: (id) => {
     set({
@@ -114,6 +136,8 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     localStorage.setItem("deleteId", id.toString());
   },
 
+  // canceldelete
+
   cancelDelete: () => {
     set({
       showModal: false,
@@ -124,35 +148,67 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     localStorage.removeItem("deleteId");
   },
 
+  // confirmdelete using try catch
+
   confirmDelete: async () => {
     const id = get().deleteId;
 
     if (id === null) return;
 
-    await api.deleteTodo(id);
+    try {
+      await api.deleteTodo(id);
 
-    set({
-      showModal: false,
-      deleteId: null,
-    });
+      set({
+        showModal: false,
+        deleteId: null,
+      });
 
-    localStorage.removeItem("showModal");
-    localStorage.removeItem("deleteId");
+      localStorage.removeItem("showModal");
+      localStorage.removeItem("deleteId");
 
-    get().fetchTodos();
+      get().fetchTodos();
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+
+      set({
+        error: "Failed to delete task.",
+      });
+    }
   },
+
+  // completetask using try catch
 
   completeTask: async (todo) => {
-    await api.patchTodo(todo.id, todo.completed ? 0 : 1, todo.favourite);
+    try {
+      await api.patchTodo(todo.id, !todo.completed, todo.favourite);
 
-    get().fetchTodos();
+      get().fetchTodos();
+    } catch (error) {
+      console.error("Error completing todo:", error);
+
+      set({
+        error: "Failed to update task.",
+      });
+    }
   },
+
+  // fav task using try catch
 
   favouriteTask: async (todo) => {
-    await api.patchTodo(todo.id, todo.completed, todo.favourite ? 0 : 1);
+    try {
+      await api.patchTodo(todo.id, todo.completed, !todo.favourite);
 
-    get().fetchTodos();
+      get().fetchTodos();
+    } catch (error) {
+      console.error("Error updating favourite:", error);
+
+      set({
+        error: "Failed to update favourite.",
+      });
+    }
   },
+
+  // edit start
 
   startEdit: (index) => {
     const todo = get().todos[index];
@@ -163,6 +219,8 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
     });
   },
 
+  // save edit using try catch
+
   saveEdit: async () => {
     const { editIndex, editText, todos } = get();
 
@@ -170,13 +228,21 @@ export const useTodoStore = create<TodoStore>((set, get) => ({
 
     if (editText.trim() === "") return;
 
-    await api.updateTodo(todos[editIndex].id, editText);
+    try {
+      await api.updateTodo(todos[editIndex].id, editText);
 
-    set({
-      editIndex: null,
-      editText: "",
-    });
+      set({
+        editIndex: null,
+        editText: "",
+      });
 
-    get().fetchTodos();
+      get().fetchTodos();
+    } catch (error) {
+      console.error("Error updating todo:", error);
+
+      set({
+        error: "Failed to update task.",
+      });
+    }
   },
 }));

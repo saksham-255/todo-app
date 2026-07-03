@@ -1,87 +1,107 @@
 import { Request, Response } from "express";
-import db from "../config/db";
+import Todo from "../models/Todo";
 
-// get todos
+// Get Todos
 
-export const getTodos = (req: Request, res: Response) => {
-  db.query("SELECT * FROM todos", (err, result) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
+export const getTodos = async (req: Request, res: Response) => {
+  try {
+    const todos = await Todo.findAll({
+      order: [["id", "ASC"]],
+    });
 
-    res.json(result);
-  });
+    res.json(todos);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
-// add todo
+// Add Todo
 
-export const addTodo = (req: Request, res: Response) => {
-  const { text } = req.body;
+export const addTodo = async (req: Request, res: Response) => {
+  try {
+    const { text } = req.body;
 
-  db.query(
-    "INSERT INTO todos(text, completed, favourite) VALUES (?,0,0)",
-    [text],
-    (err) => {
-      if (err) {
-        return res.status(500).json(err);
-      }
+    await Todo.create({
+      text,
+      completed: false,
+      favourite: false,
+    });
 
-      res.json({
-        message: "Todo Added Successfully",
-      });
-    }
-  );
+    res.json({
+      message: "Todo Added Successfully",
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
-// delete todo
+// Delete Todo
 
-export const deleteTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
+export const deleteTodo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
 
-  db.query("DELETE FROM todos WHERE id=?", [id], (err) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
+    await Todo.destroy({
+      where: {
+        id,
+      },
+    });
 
     res.json({
       message: "Todo Deleted Successfully",
     });
-  });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
-// edit todo
+// Update Todo
 
-export const updateTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { text } = req.body;
+export const updateTodo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { text } = req.body;
 
-  db.query("UPDATE todos SET text=? WHERE id=?", [text, id], (err) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
+    await Todo.update(
+      { text },
+      {
+        where: {
+          id,
+        },
+      }
+    );
 
     res.json({
       message: "Todo Updated Successfully",
     });
-  });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
-//   complete and favourite
 
-export const patchTodo = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { completed, favourite } = req.body;
+// Complete & Favourite
 
-  db.query(
-    "UPDATE todos SET completed=?, favourite=? WHERE id=?",
-    [completed, favourite, id],
-    (err) => {
-      if (err) {
-        return res.status(500).json(err);
+export const patchTodo = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { completed, favourite } = req.body;
+
+    await Todo.update(
+      {
+        completed,
+        favourite,
+      },
+      {
+        where: {
+          id,
+        },
       }
+    );
 
-      res.json({
-        message: "Todo Updated Successfully",
-      });
-    }
-  );
+    res.json({
+      message: "Todo Updated Successfully",
+    });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };

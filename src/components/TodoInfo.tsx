@@ -33,7 +33,7 @@ const TodoInfo = ({ todo, index }: Props) => {
       {/* Text */}
       <div className="min-w-0 flex-1">
         <div className="flex items-start gap-2 md:gap-2.5">
-          {todo.favourite === 1 && (
+          {todo.favourite && (
             <FaStar className="shrink-0 mt-1 text-yellow-400 text-base md:text-lg drop-shadow-md" />
           )}
 
