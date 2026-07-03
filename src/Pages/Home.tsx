@@ -47,7 +47,7 @@ const Home = () => {
     }
   }, []);
 
-  const completedTasks = todos.filter((todo) => todo.completed === 1).length;
+  const completedTasks = todos.filter((todo) => todo.completed).length;
 
   const progress =
     todos.length === 0 ? 0 : Math.round((completedTasks / todos.length) * 100);
